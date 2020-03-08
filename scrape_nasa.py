@@ -1,48 +1,36 @@
+
+import os
+
+import csv
+
 from splinter import Browser
-from bs4 import BeautifulSoup as bs
-import time
+
+def find_browser():
+    executable_path = {'executable_path': r'C:\Users\ayl00\OneDrive\Desktop\web-scraping-challenge\Missions_to_Mars\chromedriver.exe'}
+    browser = Browser('chrome', **executable_path, headless=False)
+    
+def pull_csv():
+    
+    mars_data = []
+
+    csvfile = (r'C:\Users\ayl00\OneDrive\Desktop\web-scraping-challenge\Missions_to_Mars\final_data.csv')
+
+    csvreader = csv.reader(csvfile, delimiter=',')
+
+    csvpath = os.path.join(r'C:\Users\ayl00\OneDrive\Desktop\web-scraping-challenge\Missions_to_Mars\final_data.csv')
+
+    with open(csvpath, newline='') as csvfile:
+
+        print(csvreader)
 
 
-def init_browser():
-    # @NOTE: Replace the path with your actual path to the chromedriver
-    executable_path = {"chromedriver"}
-    return Browser("chrome", "C:\Program Files (x86)\Google\Chrome\Application", headless=False)
+    csv_header = next(csvreader)
+
+    browser = find_browser()
+    for row in csvreader:
+        mars_data.append(row)
+        return mars_data
 
 
-def scrape_info():
-    browser = init_browser()
-
-    url = "https://www.jpl.nasa.gov/spaceimages/images/largesize/PIA16225_hires.jpg"
-    browser.visit(url)
-
-    time.sleep(1)
-
-    # Scrape page into Soup
-    html = browser.html
-    soup = bs(html, "html.parser")
-
-    # Get the average temps
-    avg_temps = soup.find('div', id='weather')
-
-    # Get the min avg temp
-    min_temp = avg_temps.find_all('strong')[0].text
-
-    # Get the max avg temp
-    max_temp = avg_temps.find_all('strong')[1].text
-
-    # BONUS: Find the src for the sloth image
-    relative_image_path = soup.find_all('img')[2]["src"]
-    sloth_img = url + relative_image_path
-
-    # Store data in a dictionary
-    costa_data = {
-        "sloth_img": sloth_img,
-        "min_temp": min_temp,
-        "max_temp": max_temp
-    }
-
-    # Close the browser after scraping
-    browser.quit()
-
-    # Return results
-    return costa_data
+if __name__ == '__main__':
+    pull_csv()
